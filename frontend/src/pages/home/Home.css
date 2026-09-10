@@ -77,6 +77,23 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+  }
+
+  .sub-container {
+    margin-left: 52px;
+    width: calc(100% - 52px);
+  }
+
+  .sidebar-open + .sub-container {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
+
   .chat-section {
     padding: 0 8px;
   }

@@ -170,15 +170,19 @@
 /* ================= MOBILE BREAKPOINT ================= */
 
 @media (max-width: 768px) {
-  .sidebar-open {
+  .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 260px;
+    height: 100dvh;
     z-index: 1000;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);
-    background: #121318;
+    background: #000000;
+  }
+
+  .sidebar-open {
+    width: 260px;
   }
 
   .sidebar-closed {
