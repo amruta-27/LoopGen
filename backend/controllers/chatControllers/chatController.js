@@ -4,7 +4,6 @@ const Message = require("../../models/message");
 
 const getChatResponse = async (req, res) => {
   try {
-    console.log("googlekeyy : ", ai.models);
     const { prompt, cid } = req.body;
 
     if (!cid) {
@@ -151,7 +150,6 @@ const getAllConversations = async (req, res) => {
 const getMessagesForConversation = async (req, res) => {
   try {
     const { conversationId } = req.params;
-    console.log("Fetching messages for conversation ID:", conversationId);
     const messages = await Message.find({
       conversationId: conversationId,
     }).sort({ createdAt: 1 });
