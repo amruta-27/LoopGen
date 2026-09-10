@@ -175,18 +175,26 @@
     top: 0;
     left: 0;
     bottom: 0;
+    width: 52px;
     height: 100dvh;
     z-index: 1000;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);
+    box-shadow: none;
     background: #000000;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .sidebar-open {
     width: 260px;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);
   }
 
   .sidebar-closed {
     width: 52px;
+  }
+
+  .sidebar-header {
+    justify-content: center;
+    padding: 0 6px;
   }
 
   .sidebar-closed .sidebar-header {
