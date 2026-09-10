@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import "./Chat.css";
 
 import Thinking from "../../components/thinking/Thinking";
-import CodeBlock from "../../components/codeblock/codeBlock";
+import CodeBlock from "../../components/codeblock/CodeBlock";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useContext } from "react";
