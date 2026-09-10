@@ -1,0 +1,150 @@
+.delete-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.65);
+  display: grid;
+  place-items: center;
+  animation: delete-modal-fade-in 0.18s ease-out both;
+  box-sizing: border-box;
+}
+
+.delete-modal-backdrop.closing {
+  animation: delete-modal-fade-out 0.18s ease-in both;
+}
+
+.delete-modal {
+  width: min(420px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid #383838;
+  border-radius: 12px;
+  background: #202020;
+  color: white;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: delete-modal-rise-in 0.2s ease-out both;
+  box-sizing: border-box;
+}
+
+.delete-modal-backdrop.closing .delete-modal {
+  animation: delete-modal-fall-out 0.18s ease-in both;
+}
+
+@keyframes delete-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes delete-modal-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes delete-modal-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes delete-modal-fall-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+.delete-modal h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.delete-modal p {
+  margin: 0;
+  color: #b8b8b8;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.delete-modal strong {
+  color: white;
+  font-weight: 600;
+}
+
+.delete-modal-error {
+  margin-top: 12px !important;
+  color: #ff8d8d !important;
+}
+
+.delete-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.delete-modal-actions button {
+  min-width: 84px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.delete-modal-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.delete-modal-cancel {
+  background: #383838;
+  color: white;
+}
+
+.delete-modal-cancel:hover:not(:disabled) {
+  background: #484848;
+}
+
+.delete-modal-confirm {
+  background: #d94343;
+  color: white;
+}
+
+.delete-modal-confirm:hover:not(:disabled) {
+  background: #ed5151;
+}
+
+@media (max-width: 480px) {
+  .delete-modal {
+    padding: 18px;
+  }
+
+  .delete-modal h2 {
+    font-size: 18px;
+  }
+
+  .delete-modal p {
+    font-size: 13px;
+  }
+
+  .delete-modal-actions {
+    margin-top: 18px;
+  }
+}

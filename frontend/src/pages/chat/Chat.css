@@ -1,0 +1,254 @@
+.chat-container {
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  flex: 1;
+  padding: 16px 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.message {
+  padding: 12px 18px;
+  max-width: 100%;
+  min-width: 0;
+  margin: 16px 0 0 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.user {
+  margin-left: auto;
+  margin-right: 0;
+  background-color: #222831;
+  width: fit-content;
+  max-width: 75%;
+  border-radius: 18px 18px 4px 18px;
+  color: white;
+}
+
+.ai {
+  margin-right: auto;
+  margin-left: 0;
+  background-color: transparent;
+  width: fit-content;
+  max-width: 90%;
+  border-radius: 18px 18px 18px 4px;
+  color: white;
+}
+
+.message hr {
+  border: none;
+  border-top: 1px solid #343a40;
+  margin: 20px 0;
+}
+
+.message pre {
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.message code {
+  overflow-wrap: anywhere;
+}
+
+.message table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Normal text */
+.message p {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.message p:first-child {
+  margin-top: 0;
+}
+
+.message p:last-child {
+  margin-bottom: 0;
+}
+
+/* Code block */
+.message pre {
+  padding: 10px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+/* Code inside the code block */
+.message pre code {
+  background: transparent;
+  padding: 0;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  white-space: pre;
+}
+
+/* Inline code */
+.message p code {
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-family: "Courier New", monospace;
+}
+
+/* Code block container styling */
+.code-block {
+  margin: 12px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1c1b1b;
+  max-width: 100%;
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #1c1b1b;
+}
+
+.code-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  padding: 0 12px;
+  background: #1c1b1b;
+  font-size: 13px;
+}
+
+.code-header span {
+  color: #aaa;
+  text-transform: lowercase;
+}
+
+.code-header button {
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+
+.code-header button:hover {
+  background: #343941;
+  color: white;
+}
+
+.code-block pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  overflow-x: auto;
+}
+
+/* Loading spinner */
+.chat-loader {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-loader-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* No message placeholder design */
+.no-messages {
+  height: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.no-messages-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: #1c1b1b;
+  margin-bottom: 18px;
+}
+
+.no-messages-icon svg {
+  width: 26px;
+  height: 26px;
+  color: #aaa;
+}
+
+.no-messages h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+}
+
+.no-messages p {
+  margin: 0;
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.6;
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    padding: 12px 6px;
+  }
+
+  .message {
+    padding: 10px 14px;
+    font-size: 15px;
+    margin: 10px 0 0 0;
+  }
+
+  .user {
+    max-width: 88%;
+    margin-left: auto;
+  margin-right: 0;
+  }
+
+  .ai {
+    max-width: 95%;
+  }
+
+  .no-messages {
+    padding: 16px;
+  }
+
+  .no-messages h2 {
+    font-size: 19px;
+  }
+
+  .no-messages p {
+    font-size: 13px;
+  }
+}

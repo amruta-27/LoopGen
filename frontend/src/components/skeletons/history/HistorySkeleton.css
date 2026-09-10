@@ -1,0 +1,50 @@
+.history-skeleton {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.history-skeleton-item {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+}
+
+.history-skeleton-line {
+  height: 14px;
+  width: 75%;
+  border-radius: 6px;
+
+  background: #e5e7eb;
+
+  animation: history-skeleton-loading 1.4s ease-in-out infinite;
+}
+
+.history-skeleton-item:nth-child(2) .history-skeleton-line {
+  width: 60%;
+}
+
+.history-skeleton-item:nth-child(3) .history-skeleton-line {
+  width: 80%;
+}
+
+.history-skeleton-item:nth-child(4) .history-skeleton-line {
+  width: 65%;
+}
+
+.history-skeleton-item:nth-child(5) .history-skeleton-line {
+  width: 72%;
+}
+
+@keyframes history-skeleton-loading {
+  0% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}

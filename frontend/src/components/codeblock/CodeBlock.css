@@ -1,0 +1,55 @@
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+
+/* Language + Code icon */
+.code-language {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Code icon box */
+.code-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  background: transparent;
+  border-radius: 6px;
+
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Copy button */
+.copy-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background: #343941;
+  color: white;
+}
