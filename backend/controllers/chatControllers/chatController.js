@@ -47,7 +47,7 @@ const getChatResponse = async (req, res) => {
                         `;
 
       const titleResponse = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: titlePrompt,
       });
 
