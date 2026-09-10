@@ -177,8 +177,7 @@
     bottom: 0;
     width: 52px;
     min-width: 52px;
-    /* height: 100dvh; */
-    height: fit-content;
+    height: 100dvh;
     z-index: 1000;
     box-shadow: none;
     background: #000000;
