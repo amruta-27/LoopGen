@@ -1,12 +1,16 @@
 .new-chat-page {
   width: 100%;
   max-width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
   height: 100dvh;
   display: flex;
   background: black;
   color: white;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .new-chat-content {

@@ -10,8 +10,8 @@
   height: 100vh;
   height: 100dvh;
   flex-shrink: 0;
-  background: #121318;
-  border-right: 1px solid #2e2e2e;
+  background: #000000;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   transition: width 0.25s ease, transform 0.25s ease;
   z-index: 100;
