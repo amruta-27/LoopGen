@@ -76,7 +76,7 @@ const SideBar = () => {
           <div className="sidebar-header">
             {sidebarOpen ? (
               <>
-                <h2 className="sidebar-title">ChatGPT</h2>
+                <h2 className="sidebar-title">LoopGen</h2>
                 <button
                   className="sidebar-toggle"
                   onClick={() => setSidebarOpen((prev) => !prev)}
