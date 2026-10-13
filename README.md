@@ -1,35 +1,43 @@
-# LoopGen
+# LoopGen AI
 
-LoopGen is a conversational AI application with chat history and document-grounded answers. Users can create conversations, ask questions, and upload PDF or plain-text documents for retrieval-augmented responses.
+LoopGen is a conversational AI application that supports chat history, streaming AI responses, and document-grounded question answering using Retrieval-Augmented Generation (RAG). Users can upload PDF or plain-text documents and ask questions based on their contents.
+
+🚀 **Live Demo:** [https://loopgenai.netlify.app/](https://loopgenai.netlify.app/)
 
 ## Features
 
-- Create, browse, and delete conversations.
-- Stream AI responses in the chat.
-- Generate conversation titles after the first few messages.
-- Upload one PDF or TXT document to a conversation and ask questions about its contents.
-- Extract and chunk document text, store embeddings in MongoDB Atlas, and retrieve relevant chunks for answers.
-- Display upload, request, and validation feedback with dismissible toast notifications.
+- **Conversational AI:** Create, browse, and delete conversations.
+- **Streaming Responses:** Receive AI-generated responses as they are streamed.
+- **Conversation Titles:** Automatically generate conversation titles after the initial messages.
+- **Document Uploads:** Upload a PDF or TXT document to a conversation.
+- **Retrieval-Augmented Generation (RAG):** Extract and split document text into chunks, generate embeddings, and retrieve relevant content for answering questions.
+- **Vector Search:** Store document chunks and embeddings in MongoDB Atlas and retrieve relevant information using Atlas Vector Search.
+- **Context-Aware Q&A:** Ask questions and follow-ups about uploaded documents.
+- **User Feedback:** Display upload, request, and validation messages through dismissible toast notifications.
 
-## Tech stack
+## Tech Stack
 
-- **Frontend:** React, Vite, React Router, Axios
-- **Backend:** Node.js, Express
-- **Database and vector search:** MongoDB Atlas and Atlas Vector Search
-- **AI and embeddings:** Google Gemini through LangChain
+| Category | Technologies |
+| --- | --- |
+| Frontend | React, Vite, React Router, Axios |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas |
+| Vector Search | MongoDB Atlas Vector Search |
+| AI and Embeddings | Google Gemini API, LangChain |
 
-## Repository layout
+## Project Structure
 
 ```text
-.
+LoopGen/
 ├── backend/
 │   ├── config/          # Database and AI configuration
-│   ├── controllers/     # Chat and document request handlers
+│   ├── controllers/     # Chat and document handlers
 │   ├── models/          # Conversation and message models
 │   ├── routes/          # API routes
 │   ├── services/        # RAG response service
-│   ├── utils/           # Document loading, storage, and retrieval
+│   ├── utils/           # Document loading, storage, retrieval
 │   └── server.js
+│
 └── frontend/
     ├── src/
     │   ├── components/
@@ -39,15 +47,17 @@ LoopGen is a conversational AI application with chat history and document-ground
     └── package.json
 ```
 
-## Requirements
+## Prerequisites
 
-- Node.js and npm
-- A MongoDB database reachable by the backend (MongoDB Atlas is required for the configured Atlas Vector Search integration)
-- A Google AI API key with access to the configured Gemini chat and embedding models
+Before running the project locally, ensure you have:
 
-## Configuration
+- [Node.js](https://nodejs.org/) and npm installed.
+- A MongoDB database accessible to the backend. MongoDB Atlas is required for the configured Atlas Vector Search integration.
+- A Google AI API key with access to the configured Gemini chat and embedding models.
 
-Create `backend/.env` with:
+## Environment Configuration
+
+Create a `.env` file inside the `backend/` directory:
 
 ```env
 PORT=5000
@@ -55,26 +65,51 @@ MONGO_URI=your_mongodb_connection_string
 GOOGLE_API_KEY=your_google_ai_api_key
 ```
 
-Keep environment files private; do not commit API keys or database credentials.
+Replace the placeholder values with your actual credentials.
 
-### MongoDB Atlas Vector Search
+**Important:** Never commit `.env` files, API keys, or database credentials to GitHub.
 
-Document chunks are stored in the `documentchunks` collection. The backend queries an Atlas Vector Search index named `loopgen_vector_index`. Create that index on `documentchunks` with:
+### MongoDB Atlas Vector Search Setup
 
-- A vector field named `embedding`, configured for the dimensionality of the configured `gemini-embedding-001` embedding output (3072 dimensions with the current default model settings), using cosine similarity.
-- A filter field named `conversationId` with type `filter`.
+Document chunks are stored in the `documentchunks` collection. The application uses a vector search index named `loopgen_vector_index`.
 
-The vector search is scoped to the active conversation so document content from other conversations is not included in retrieval.
+Configure the index with these fields:
 
-### Frontend API URL
+| Field | Configuration |
+| --- | --- |
+| `embedding` | Vector field, 3072 dimensions, cosine similarity |
+| `conversationId` | Filter field |
 
-The API client in `frontend/src/services/api.js` currently points to the deployed LoopGen API. To use a local backend, change its `API_URL` to `http://localhost:5000/api` before starting the frontend. The backend enables CORS for browser requests.
+The embedding configuration corresponds to the currently configured `gemini-embedding-001` model.
 
-## Run locally
+Retrieval is filtered by the active conversation ID to keep document searches scoped to that conversation.
 
-Open two terminals from the repository root.
+### Frontend API Configuration
 
-### 1. Start the backend
+The API client is located at:
+
+`frontend/src/services/api.js`
+
+It currently points to the deployed LoopGen API. To run the application locally, update the API URL to:
+
+```js
+http://localhost:5000/api
+```
+
+The backend enables CORS for browser requests.
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/amruta-27/LoopGen.git
+cd LoopGen
+```
+
+### 2. Start the Backend
+
+Open a terminal and run:
 
 ```bash
 cd backend
@@ -82,11 +117,15 @@ npm install
 npm start
 ```
 
-The API listens on port `5000` by default (or the port configured in `backend/.env`). The server root responds at `http://localhost:5000/`.
+The backend runs on port `5000` by default, unless another port is configured in `backend/.env`.
 
-### 2. Start the frontend
+You can check the server at:
 
-Set the frontend API URL to the local backend as described above, then run:
+`http://localhost:5000/`
+
+### 3. Start the Frontend
+
+Update the frontend API URL to the local backend, then open a second terminal:
 
 ```bash
 cd frontend
@@ -94,41 +133,49 @@ npm install
 npm run dev
 ```
 
-Vite prints the local development URL in the terminal (typically `http://localhost:5173`).
+Vite will display the local development URL, typically:
 
-## API overview
+`http://localhost:5173`
 
-All application endpoints are mounted under `/api/chat`.
+## API Endpoints
+
+All endpoints are mounted under `/api/chat`.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `POST` | `/newconversation` | Create a conversation |
-| `GET` | `/conversations` | List conversations |
-| `GET` | `/conversations/:conversationId/messages` | Get messages for a conversation |
+| `POST` | `/newconversation` | Create a new conversation |
+| `GET` | `/conversations` | Retrieve conversations |
+| `GET` | `/conversations/:conversationId/messages` | Retrieve messages for a conversation |
 | `DELETE` | `/conversations/:conversationId` | Delete a conversation |
 | `POST` | `/messages` | Send a prompt and stream the AI response |
-| `POST` | `/documents/upload?conversationId=:id` | Upload and process a document for a conversation |
+| `POST` | `/documents/upload?conversationId=:id` | Upload and process a document |
 
 The document upload endpoint expects `multipart/form-data` with a single file field named `document`.
 
-## Document upload limits
+## Document Upload Limitations
 
-- Accepted formats: PDF and plain text (`.pdf`, `.txt`)
-- Maximum size: 5 MB
-- One file per upload
-- The document must contain readable text; scanned PDFs without extractable text may not work.
+- **Supported formats:** PDF and TXT
+- **Maximum file size:** 5 MB
+- **Files per upload:** One
+- **Text extraction:** Documents must contain readable, extractable text. Scanned PDFs without an OCR text layer may not work.
 
-## Frontend scripts
+## Available Scripts
 
-Run these commands from `frontend/`:
+### Frontend
+
+Run these commands from the `frontend/` directory:
 
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start the Vite development server |
-| `npm run build` | Create a production build |
+| `npm run build` | Build the production frontend |
 | `npm run preview` | Preview the production build |
 | `npm run lint` | Run ESLint |
 
-## Backend scripts
+### Backend
 
-Run `npm start` from `backend/` to start the API server. A test script is not configured in the backend package yet.
+Run `npm start` from the `backend/` directory to start the API server. A backend test script is not currently configured.
+
+---
+
+**Built with React, Node.js, MongoDB Atlas, LangChain, and Google Gemini.**
