@@ -191,6 +191,17 @@ const Home = () => {
         "Unable to send your message. Please try again.",
       );
 
+      if (
+        error.response?.status === 404 &&
+        errorMessage.toLowerCase().includes("conversation not found")
+      ) {
+        setMessages([]);
+        setConversationId(null);
+        localStorage.removeItem("Conversation_ID");
+        navigate("/", { replace: true });
+        return;
+      }
+
       setToast({ type: "error", message: errorMessage });
       setMessages((prev) => [
         ...prev,
