@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Home.css";
 
 import Input from "../../components/input/Input";
@@ -36,6 +36,7 @@ const Home = () => {
   const closeToast = useCallback(() => setToast(null), []);
 
   const { conversationId } = useParams();
+  const navigate = useNavigate();
 
   const {
     setMessages,
@@ -59,6 +60,14 @@ const Home = () => {
         setMessages(response.data);
       } catch (error) {
         console.error("Error fetching conversation messages:", error);
+        if (error.response?.status === 404) {
+          setMessages([]);
+          setConversationId(null);
+          localStorage.removeItem("Conversation_ID");
+          navigate("/", { replace: true });
+          return;
+        }
+
         setToast({
           type: "error",
           message: getRequestErrorMessage(
@@ -72,7 +81,13 @@ const Home = () => {
     };
 
     fetchMessages();
-  }, [conversationId, setMessages, setConversationId, setChatLoading]);
+  }, [
+    conversationId,
+    navigate,
+    setMessages,
+    setConversationId,
+    setChatLoading,
+  ]);
 
   const onSubmit = async (value) => {
     if (!value.trim() || isLoading || !conversationId) return;

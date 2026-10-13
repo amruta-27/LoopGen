@@ -154,11 +154,21 @@ const getAllConversations = async (req, res) => {
 const getMessagesForConversation = async (req, res) => {
   try {
     const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
     const messages = await Message.find({
       conversationId: conversationId,
     }).sort({ createdAt: 1 });
     res.status(200).json(messages);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
     console.error("Error fetching messages for conversation:", error);
     res
       .status(500)
