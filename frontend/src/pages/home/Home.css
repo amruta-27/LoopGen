@@ -76,6 +76,22 @@
   box-sizing: border-box;
 }
 
+.input-section.has-file {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.input-section.has-file .file-input-control {
+  display: contents;
+}
+
+.input-section.has-file .file-preview {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 5px 6px 10px;
+}
+
 @media (max-width: 768px) {
   .container {
     position: relative;
@@ -109,3 +125,9 @@
     border-radius: 10px;
   }
 }
+
+
+
+
+
+/* adding styles to input of files */

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Home.css";
 
@@ -6,13 +6,34 @@ import Input from "../../components/input/Input";
 import Button from "../../components/button/Button";
 import SideBar from "../../components/sidebar/SideBar";
 import Chat from "../chat/Chat";
+import FileInput from "../../components/fileinput/FileInput";
+import Toast from "../../components/toast/Toast";
 
 import api from "../../services/api";
 import { MessageContext } from "../../context/MessageContext/MessageContext";
 
+const getRequestErrorMessage = (error, fallback) => {
+  let responseData = error.response?.data;
+
+  if (typeof responseData === "string") {
+    try {
+      responseData = JSON.parse(responseData);
+    } catch {
+      return responseData.trim() || fallback;
+    }
+  }
+
+  return (
+    responseData?.message || responseData?.error || error.message || fallback
+  );
+};
+
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [toast, setToast] = useState(null);
+  const closeToast = useCallback(() => setToast(null), []);
 
   const { conversationId } = useParams();
 
@@ -38,6 +59,13 @@ const Home = () => {
         setMessages(response.data);
       } catch (error) {
         console.error("Error fetching conversation messages:", error);
+        setToast({
+          type: "error",
+          message: getRequestErrorMessage(
+            error,
+            "Unable to load this conversation. Please try again.",
+          ),
+        });
       } finally {
         setChatLoading(false);
       }
@@ -47,33 +75,35 @@ const Home = () => {
   }, [conversationId, setMessages, setConversationId, setChatLoading]);
 
   const onSubmit = async (value) => {
-    if (!value.trim() || isLoading) return;
+    if (!value.trim() || isLoading || !conversationId) return;
 
     const prompt = value.trim();
-
-    inputRef.current?.clear();
+    const attachmentName = selectedFile?.name;
     setIsLoading(true);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: prompt,
-        sender: "user",
-      },
-    ]);
-
     try {
-      let fullResponse = "";
-      let displayedResponse = "";
-      let typing = false;
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("document", selectedFile);
+
+        await api.post("/chat/documents/upload", formData, {
+          params: { conversationId },
+        });
+
+        setSelectedFile(null);
+      }
+
+      inputRef.current?.clear();
 
       setMessages((prev) => [
         ...prev,
-        {
-          text: "",
-          sender: "ai",
-        },
+        { text: prompt, sender: "user", attachmentName },
+        { text: "", sender: "ai" },
       ]);
+
+      let fullResponse = "";
+      let displayedResponse = "";
+      let typing = false;
 
       const typeNextCharacter = () => {
         if (displayedResponse.length >= fullResponse.length) {
@@ -110,9 +140,10 @@ const Home = () => {
         },
         {
           responseType: "text",
-
           onDownloadProgress: (progressEvent) => {
-            const responseText = progressEvent.event.target.responseText;
+            const responseText = progressEvent.event?.target?.responseText;
+
+            if (typeof responseText !== "string") return;
 
             fullResponse = responseText;
 
@@ -123,40 +154,45 @@ const Home = () => {
         },
       );
 
+      // 3. Preserve your existing conversation-title update.
       const title = response.headers["x-chat-title"];
 
       if (title) {
-        console.log("Updating conversation title to:", title);
         setConversationList((prev) =>
           prev.map((chat) =>
-            chat._id === conversationId
-              ? {
-                  ...chat,
-                  title,
-                }
-              : chat,
+            chat._id === conversationId ? { ...chat, title } : chat,
           ),
         );
       }
+      //setToast({ type: "success", message: "Message sent successfully." });
     } catch (error) {
-      console.error("Message error:", error);
+      console.error(
+        "Message submission failed:",
+        error.response?.data || error,
+      );
 
-      if (error.response?.status === 400) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: "You are out of messages for this chat. Please start a new chat.",
-            sender: "ai",
-          },
-        ]);
-      }
+      const errorMessage = getRequestErrorMessage(
+        error,
+        "Unable to send your message. Please try again.",
+      );
+
+      setToast({ type: "error", message: errorMessage });
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: errorMessage,
+          sender: "ai",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="container">
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={closeToast} />
+      )}
       <SideBar />
 
       <div className="sub-container">
@@ -170,7 +206,11 @@ const Home = () => {
 
         {conversationId && (
           <div className="sections lower-section">
-            <div className="input-section">
+            <div className={`input-section${selectedFile ? " has-file" : ""}`}>
+              <FileInput
+                selectedFile={selectedFile}
+                onFileChange={setSelectedFile}
+              />
               <Input
                 ref={inputRef}
                 placeholder="Type a message..."

@@ -31,6 +31,11 @@ const Chat = ({ loading }) => {
           {messages.length > 0 &&
             messages.map((message, index) => (
               <div key={index} className={`message ${message.sender}`}>
+                {message.attachmentName && (
+                  <div className="message-attachment-name">
+                    {message.attachmentName}
+                  </div>
+                )}
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{

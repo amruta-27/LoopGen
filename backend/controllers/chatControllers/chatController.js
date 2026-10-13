@@ -1,6 +1,8 @@
 const ai = require("../../config/aiConfig");
 const Conversation = require("../../models/conversations");
 const Message = require("../../models/message");
+const { HumanMessage, AIMessage } = require("@langchain/core/messages");
+const { streamRagAnswer } = require("../../services/ragService");
 
 const getChatResponse = async (req, res) => {
   try {
@@ -46,12 +48,9 @@ const getChatResponse = async (req, res) => {
                         - Return only the title
                         `;
 
-      const titleResponse = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: titlePrompt,
-      });
+      const titleResponse = await ai.invoke(titlePrompt);
 
-      title = titleResponse.text.trim();
+      title = titleResponse.content.trim();
 
       await Conversation.findByIdAndUpdate(cid, {
         title: title,
@@ -62,11 +61,11 @@ const getChatResponse = async (req, res) => {
     }
 
     //setting limit to convo
-    if (userMessageCount >= 20) {
+    if (userMessageCount >= 25) {
       return res.status(400).json({
         error: "Conversation limit reached",
         message:
-          "This conversation has reached the maximum of 20 messages. Please start a new chat.",
+          "This conversation has reached the maximum of 25 messages. Please start a new chat.",
       });
     }
 
@@ -86,26 +85,24 @@ const getChatResponse = async (req, res) => {
       createdAt: 1,
     });
 
-    const contents = history.map((message) => ({
-      role: message.sender === "user" ? "user" : "model",
-      parts: [
-        {
-          text: message.text,
-        },
-      ],
-    }));
-
-    const response = await ai.models.generateContentStream({
-      model: "gemini-3.6-flash",
-      contents: contents,
-    });
+    const contents = history.map((message) =>
+      message.sender === "user"
+        ? new HumanMessage(message.text)
+        : new AIMessage(message.text),
+    );
 
     let fullResponse = "";
 
-    for await (const chunk of response) {
-      if (chunk.text) {
-        fullResponse += chunk.text;
-        res.write(chunk.text);
+    // Use the existing MongoDB connection for vector retrieval
+    const db = require("mongoose").connection.db;
+
+    const stream = await streamRagAnswer(db, prompt, history.slice(0, -1), cid);
+    for await (const chunk of stream) {
+      const text = typeof chunk.content === "string" ? chunk.content : "";
+
+      if (text) {
+        fullResponse += text;
+        res.write(text);
       }
     }
 
@@ -118,7 +115,14 @@ const getChatResponse = async (req, res) => {
     res.end();
   } catch (error) {
     console.error("Error fetching chat response:", error);
-    res.status(500).json({ error: "Failed to fetch chat response" });
+
+    if (res.headersSent) {
+      return res.end();
+    }
+
+    return res.status(500).json({
+      error: "Failed to fetch chat response",
+    });
   }
 };
 
